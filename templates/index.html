@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Tracker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            padding: 32px 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto 32px;
+        }
+
+        h1 { color: #1B3A6B; font-size: 26px; }
+
+        .add-btn {
+            background: #1B3A6B;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .add-btn:hover { background: #142d52; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            max-width: 1000px;
+            margin: 0 auto 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1B3A6B;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .table-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #1B3A6B;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+            color: #444;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8f9ff; }
+
+        .status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .Applied { background: #e3f2fd; color: #1565c0; }
+        .Interview { background: #fff3e0; color: #e65100; }
+        .Offer { background: #e8f5e9; color: #2e7d32; }
+        .Rejected { background: #ffebee; color: #c62828; }
+
+        .actions a {
+            margin-right: 8px;
+            font-size: 12px;
+            text-decoration: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .edit-btn { background: #e3f2fd; color: #1565c0; }
+        .delete-btn { background: #ffebee; color: #c62828; }
+
+        .empty {
+            text-align: center;
+            padding: 48px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💼 Job Application Tracker</h1>
+        <a href="/add" class="add-btn">+ Add Application</a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="value">{{ total }}</div>
+            <div class="label">Total Applications</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" style="color: #1565c0;">{{ applied }}</div>
+            <div class="label">Applied</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" style="color: #e65100;">{{ interview }}</div>
+            <div class="label">Interview</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" style="color: #2e7d32;">{{ offer }}</div>
+            <div class="label">Offer</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" style="color: #c62828;">{{ rejected }}</div>
+            <div class="label">Rejected</div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        {% if jobs %}
+        <table>
+            <tr>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Date Applied</th>
+                <th>Notes</th>
+                <th>Actions</th>
+            </tr>
+            {% for job in jobs %}
+            <tr>
+                <td><strong>{{ job.company }}</strong></td>
+                <td>{{ job.role }}</td>
+                <td>{{ job.location }}</td>
+                <td><span class="status {{ job.status }}">{{ job.status }}</span></td>
+                <td>{{ job.date_applied }}</td>
+                <td>{{ job.notes[:50] }}{% if job.notes|length > 50 %}...{% endif %}</td>
+                <td class="actions">
+                    <a href="/edit/{{ job.id }}" class="edit-btn">Edit</a>
+                    <a href="/delete/{{ job.id }}" class="delete-btn" onclick="return confirm('Delete this application?')">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <div class="empty">
+            <p>No applications yet. Click <strong>+ Add Application</strong> to get started!</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
